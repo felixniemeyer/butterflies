@@ -1,0 +1,4 @@
+- We don't want to use gltf, because it's not meant to carry custom shaders
+- Shaders in three
+  - flapping: 
+    - linear und normalisiert? statt rotation?

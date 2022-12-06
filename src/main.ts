@@ -1,11 +1,13 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
-import _aframe from 'aframe'
+import aframe from 'aframe'
 
 import App from './App.vue'
 import router from './router'
 
 import './body.less'
+
+console.log(aframe.version)
 
 const app = createApp(App)
 
