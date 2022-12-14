@@ -8,7 +8,7 @@ void main() {
   vec3 p = position; 
   float zPush = anim[1]; 
   if(zPush != 0.) {
-    float vPhase = mod(phase + position.x * 0.05, 1.); 
+    float vPhase = 0.5 - 0.5 * cos(3.1416 * phase + position.x * 0.05) ; 
     
     float dy = anim[0];
     float r = position.y - dy; 
@@ -19,7 +19,7 @@ void main() {
       sqrt(0.5 - 0.5 * cos(2. * 3.1416 * vPhase)) * zPush * r * (1. + 2. * abs(vPhase * 2. - 1.)) * 0.5
       //sin(2. * 2.141 * vPhase) * r *(1. - abs(vPhase * 2. - 1.)) * zPush
     ); 
-    p += normalize(d) * r; 
+    p += d; 
   }
   p.y -= cos(mod(phase + 0.85, 1.) * 2. * 3.14) * 0.5;
 
