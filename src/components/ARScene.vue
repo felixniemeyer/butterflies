@@ -15,40 +15,40 @@ The geometry is kept very simple:
 - wings meet on the up position but don't go down all the way at the bottom position
 */
 
-let r = 0
-let phase = 0
-const rSpeed = 10
-const phaseSpeed = 0.5
-const fps = 60
-let rotation = ref(`0 ${r} 0`) 
-let showDefaultBf = ref(false) 
-function updateDefaultBf() {
-  r += rSpeed / fps 
-  while(r > 360) {
-    r -= 360
+let textureId = 0
+let bfTextureFiles = ref([] as string[]) 
+function repeatedlyCheckForNewTextures() {
+  let textureFile = 'textures/bf/' + ("00000" + textureId).slice(-5) + '.png'
+  let r = new XMLHttpRequest()
+  let handled = false
+  r.onload = () => {
+    if(r.status == 200) {
+      console.log('loading', textureFile) 
+      bfTextureFiles.value.push(textureFile) 
+      textureId += 1
+      setTimeout(repeatedlyCheckForNewTextures)
+    } else {
+      setTimeout(repeatedlyCheckForNewTextures, 10000) // check every second
+      console.log('the above 404 error is normal, we\'re just scanning for new available textures') 
+    }
   }
-  rotation.value = `0 ${r} 0`
-  
-  phase += phaseSpeed / fps
-  while(phase > 1) {
-    phase -= 1
-  }
-  bfMaterial.uniforms.phase.value = phase
+  r.open('head', textureFile, true);
+  r.send();
 }
 
-new THREE.TextureLoader().load('textures/bf/default.png', (texture) => {
-  bfMaterial.uniforms.tex.value = texture
-  showDefaultBf.value = true
-  setInterval(updateDefaultBf, 1/fps) 
-}) 
+repeatedlyCheckForNewTextures()
+
 
 </script>
 
 <template>
   <div>
-    <a-scene stats vr-mode-ui="enabled: false">
-      <a-entity position="0 1.6 -2" :rotation=rotation>
-        <a-entity butterfly position="-0.5 -0.5 0">
+    <a-scene vr-mode-ui="enabled: false">
+      <a-entity v-for='bftf, i in bfTextureFiles' position="0 1.6 -2">
+        <a-entity 
+          :butterfly="{ textureFile: bftf }"
+          :key=i 
+          >
         </a-entity>
       </a-entity>
     </a-scene>

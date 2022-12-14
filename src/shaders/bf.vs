@@ -8,7 +8,7 @@ void main() {
   vec3 p = position; 
   float zPush = anim[1]; 
   if(zPush != 0.) {
-    float wingpos = (1. - abs(mod(phase + position.x * 0.05, 1.) * 2. - 1.)) * (0.8 + 0.2 * position.x); 
+    float wingpos = 1. - abs(mod(phase + position.x * 0.1, 1.) * 2. - 1.);
     float dy = anim[0];
     float r = position.y - dy; 
     p.y = dy; 
@@ -19,7 +19,7 @@ void main() {
     ); 
     p += normalize(d) * r; 
   }
-  p.y -= cos(mod(phase + 0.8, 1.) * 2. * 3.14) * 0.5;
+  p.y -= cos(mod(phase + 0.85, 1.) * 2. * 3.14) * 0.3;
 
   texUv = position.xy; 
 

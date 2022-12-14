@@ -1,0 +1,113 @@
+import AFRAME from 'aframe'
+
+import { createNoise2D } from 'simplex-noise' 
+
+import bfVs from './shaders/bf.vs'
+import bfFs from './shaders/bf.fs'
+import { Vector3 } from 'three'
+
+const noise2D = createNoise2D()
+
+const THREE = AFRAME.THREE
+
+const sY = 0.38
+const bfGeometry = new THREE.BufferGeometry()
+const wingVertices = [
+  0,  1,  0,
+  1,  1,  0,
+]
+const bfVertices = new Float32Array([
+  // body
+  0,  0,  0,
+  1,  0,  0,
+  1,  sY,0,  
+  // wings
+  ...wingVertices, 
+  ...wingVertices,
+]) 
+bfGeometry.setAttribute( 'position', new THREE.BufferAttribute( bfVertices, 3 ) );
+
+/* anim info 
+- [0]: y position around which it rotates
+- [1]: z, that determines the side of the rotation. no effect if z == 0
+*/
+const bfAnim = new Float32Array([
+  // body
+  0, 0,  
+  0, 0,  
+  0, 0, 
+  // wings
+  0, -0.4,
+  sY, -0.5,   
+  0, 0.4,
+  sY, 0.5,
+]) 
+bfGeometry.setAttribute( 'anim', new THREE.BufferAttribute( bfAnim, 2 ) ); 
+
+const bfIndex = new Uint16Array([
+  2, 1, 0, 
+
+  0, 2, 3, 
+  3, 2, 4,  
+
+  5, 2, 0, 
+  6, 2, 5
+])
+bfGeometry.setIndex(new THREE.BufferAttribute(bfIndex, 1))
+
+export const bfMaterial = new THREE.ShaderMaterial( {
+  uniforms: {
+    phase: { value: 0.9 },
+    tex: { value: 0 }, 
+    seed: { value: 0 },
+    xyzNoiseF: { value: new THREE.Vector3(1,1,1) }
+  },
+  side: THREE.DoubleSide, 
+  vertexShader: bfVs, 
+  fragmentShader: bfFs, 
+  alphaToCoverage: true
+} );
+
+AFRAME.registerComponent('butterfly', {
+  schema: {
+    textureFile: {
+      type: 'string', 
+      default: '00000.png'
+    }
+  },
+  init() {
+    this.data.material = bfMaterial.clone()
+    this.data.material.uniforms.xyzNoiseF.value = new THREE.Vector3(
+      Math.random() * 0.2 + 0.9,
+      Math.random() * 0.2 + 0.9, 
+      Math.random() * 0.2 + 0.9, 
+    )
+
+    this.data.phaseOffset = Math.random()
+    this.data.seed = Math.random() * 100
+
+    new THREE.TextureLoader().load(this.data.textureFile, (texture) => {
+      this.data.material.uniforms.tex.value = texture
+      const mesh = new THREE.Mesh(bfGeometry, this.data.material)
+      this.el.setObject3D('mesh', mesh)
+    }, () => {}, (e) => {
+      console.log('failed to load texture', e)
+    }) 
+  }, 
+  tick: function(time: number, timeDelta: number) {
+    const st = time * 0.0001
+
+    this.el.object3D.position.x = 3 * noise2D(this.data.seed, st) - 0.5
+    this.el.object3D.position.y = 3 * noise2D(this.data.seed + 100, st) - 0.5
+    this.el.object3D.position.z = 3 * noise2D(this.data.seed + 200, st)
+
+
+    const ft = time * 0.002
+    this.data.material.uniforms.phase.value = (noise2D(this.data.seed, ft * 0.333) * 0.2 + 0.2 + ft) % 1
+    this.el.object3D.rotation.y += noise2D(this.data.seed + 100, ft * 0.1) * 0.1
+
+
+    //  ft + this.data.phaseOffset
+  }
+});
+
