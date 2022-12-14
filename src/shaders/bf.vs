@@ -12,7 +12,7 @@ void main() {
     vec3 d = vec3(
       0, 
       -(wingpos* r * 2. - 1.), 
-      wingpos * zPush * r
+      sqrt(wingpos) * zPush * r
     ); 
     p += normalize(d) * r; 
   }
