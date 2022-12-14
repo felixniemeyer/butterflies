@@ -1,6 +1,9 @@
 // uniform float phase; 
 uniform float phase; 
 attribute vec2 anim;
+
+out vec2 texUv; 
+
 void main() {
   vec3 p = position; 
   float zPush = anim[1]; 
@@ -11,12 +14,14 @@ void main() {
     p.y = dy; 
     vec3 d = vec3(
       0, 
-      -(wingpos* r * 2. - 1.), 
+      -(wingpos * 2. - 1.) * r, 
       sqrt(wingpos) * zPush * r
     ); 
     p += normalize(d) * r; 
   }
-  p.y += pow((1. - cos(mod(phase - 0.05, 1.) * 2. * 3.14)) * 0.5, 2.);
+  p.y -= cos(mod(phase + 0.8, 1.) * 2. * 3.14) * 0.5;
+
+  texUv = position.xy; 
 
   gl_Position = projectionMatrix * modelViewMatrix * vec4( p, 1.0 );
 }

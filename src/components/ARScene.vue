@@ -1,7 +1,11 @@
 <script setup lang="ts">
-import { onBeforeMount, onBeforeUnmount, ref } from 'vue';
+import { onBeforeMount, onBeforeUnmount, ref } from 'vue'
+import AFRAME from 'aframe'
 
-import { bfMaterial } from '@/gfx.ts'
+import { bfMaterial } from '@/gfx'
+
+const THREE = AFRAME.THREE
+
 
 /* butterfly geo
 The geometry is kept very simple: 
@@ -14,10 +18,11 @@ The geometry is kept very simple:
 let r = 0
 let phase = 0
 const rSpeed = 10
-const phaseSpeed = 0.1
+const phaseSpeed = 0.5
 const fps = 60
 let rotation = ref(`0 ${r} 0`) 
-setInterval(() => {
+let showDefaultBf = ref(false) 
+function updateDefaultBf() {
   r += rSpeed / fps 
   while(r > 360) {
     r -= 360
@@ -29,7 +34,13 @@ setInterval(() => {
     phase -= 1
   }
   bfMaterial.uniforms.phase.value = phase
-}, 1/fps) 
+}
+
+new THREE.TextureLoader().load('textures/bf/default.png', (texture) => {
+  bfMaterial.uniforms.tex.value = texture
+  showDefaultBf.value = true
+  setInterval(updateDefaultBf, 1/fps) 
+}) 
 
 </script>
 
