@@ -97,15 +97,20 @@ AFRAME.registerComponent('butterfly', {
   tick: function(time: number, timeDelta: number) {
     const st = time * 0.0001
 
-    this.el.object3D.position.x = 3 * noise2D(this.data.seed, st) - 0.5
-    this.el.object3D.position.y = 3 * noise2D(this.data.seed + 100, st) - 0.5
-    this.el.object3D.position.z = 3 * noise2D(this.data.seed + 200, st)
+    function f(seed: number) {
+      return (
+        3/2 * noise2D(seed, st) + 
+        3/4 * noise2D(seed, st*2) + 
+        3/8 * noise2D(seed, st*4)
+      ) 
+    }
+    this.el.object3D.position.x = f(this.data.seed + 0) - 0.5
+    this.el.object3D.position.y = f(this.data.seed + 1000) - 0.5
+    this.el.object3D.position.z = f(this.data.seed + 2000)
 
-
-    const ft = time * 0.002
-    this.data.material.uniforms.phase.value = (noise2D(this.data.seed, ft * 0.333) * 0.2 + 0.2 + ft) % 1
-    this.el.object3D.rotation.y += noise2D(this.data.seed + 100, ft * 0.1) * 0.1
-
+    const ft = time * 0.001
+    this.data.material.uniforms.phase.value = (ft + this.data.phaseOffset) % 1
+    this.el.object3D.rotation.y += noise2D(this.data.seed + 100, ft * 0.1) * 0.001 * timeDelta
 
     //  ft + this.data.phaseOffset
   }

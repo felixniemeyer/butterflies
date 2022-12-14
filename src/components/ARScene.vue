@@ -44,7 +44,7 @@ repeatedlyCheckForNewTextures()
 <template>
   <div>
     <a-scene vr-mode-ui="enabled: false">
-      <a-entity v-for='bftf, i in bfTextureFiles' position="0 1.6 -2">
+      <a-entity v-for='bftf, i in bfTextureFiles' position="0 1.6 -4">
         <a-entity 
           :butterfly="{ textureFile: bftf }"
           :key=i 
