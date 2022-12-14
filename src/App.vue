@@ -14,6 +14,7 @@ import { RouterLink, RouterView } from 'vue-router'
 
 <style lang=less scoped>
 .nav {
+  z-index: 100; 
   position: absolute;
   top: 0; 
   display: block;
