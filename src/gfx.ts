@@ -10,7 +10,7 @@ const noise2D = createNoise2D()
 
 const THREE = AFRAME.THREE
 
-const sY = 0.38
+const sY = 0.37
 const bfGeometry = new THREE.BufferGeometry()
 const wingVertices = [
   0,  1,  0,
@@ -86,6 +86,8 @@ AFRAME.registerComponent('butterfly', {
     this.data.phaseOffset = Math.random()
     this.data.seed = Math.random() * 100
 
+    console.log('creating element and loading', this.data.textureFile)
+
     new THREE.TextureLoader().load(this.data.textureFile, (texture) => {
       this.data.material.uniforms.tex.value = texture
       const mesh = new THREE.Mesh(bfGeometry, this.data.material)
@@ -99,16 +101,16 @@ AFRAME.registerComponent('butterfly', {
 
     function f(seed: number) {
       return (
-        3/2 * noise2D(seed, st) + 
-        3/4 * noise2D(seed, st*2) + 
-        3/8 * noise2D(seed, st*4)
+        5/2 * noise2D(seed, st) + 
+        5/4 * noise2D(seed, st*2) + 
+        5/8 * noise2D(seed, st*4)
       ) 
     }
     this.el.object3D.position.x = f(this.data.seed + 0) - 0.5
     this.el.object3D.position.y = f(this.data.seed + 1000) - 0.5
     this.el.object3D.position.z = f(this.data.seed + 2000)
 
-    const ft = time * 0.001
+    const ft = time * 0.0015
     this.data.material.uniforms.phase.value = (ft + this.data.phaseOffset) % 1
     this.el.object3D.rotation.y += noise2D(this.data.seed + 100, ft * 0.1) * 0.001 * timeDelta
 

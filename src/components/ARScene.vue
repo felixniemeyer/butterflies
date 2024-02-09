@@ -1,11 +1,7 @@
 <script setup lang="ts">
-import { onBeforeMount, onBeforeUnmount, ref } from 'vue'
-import AFRAME from 'aframe'
+import { ref } from 'vue'
 
-import { bfMaterial } from '@/gfx'
-
-const THREE = AFRAME.THREE
-
+import '@/gfx'
 
 /* butterfly geo
 The geometry is kept very simple: 
@@ -20,7 +16,6 @@ let bfTextureFiles = ref([] as string[])
 function repeatedlyCheckForNewTextures() {
   let textureFile = 'textures/bf/' + ("00000" + textureId).slice(-5) + '.png'
   let r = new XMLHttpRequest()
-  let handled = false
   r.onload = () => {
     if(r.status == 200) {
       console.log('loading', textureFile) 
@@ -28,7 +23,7 @@ function repeatedlyCheckForNewTextures() {
       textureId += 1
       setTimeout(repeatedlyCheckForNewTextures)
     } else {
-      setTimeout(repeatedlyCheckForNewTextures, 10000) // check every second
+      setTimeout(repeatedlyCheckForNewTextures, 1000) // check every second
       console.log('the above 404 error is normal, we\'re just scanning for new available textures') 
     }
   }
@@ -44,7 +39,7 @@ repeatedlyCheckForNewTextures()
 <template>
   <div>
     <a-scene vr-mode-ui="enabled: false">
-      <a-entity v-for='bftf, i in bfTextureFiles' position="0 1.6 -4">
+      <a-entity v-for='bftf, i in bfTextureFiles' position="0 1.6 -3">
         <a-entity 
           :butterfly="{ textureFile: bftf }"
           :key=i 

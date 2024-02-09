@@ -1,0 +1,11 @@
+./resize-crop-rembg-install.sh ; reset ; echo '
+
+
+
+		hey there! 
+
+ 		just repeat the previous command to scan an image! (press up arrow and then enter) 
+
+
+
+'
